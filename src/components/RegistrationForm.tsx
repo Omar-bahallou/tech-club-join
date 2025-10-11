@@ -85,7 +85,7 @@ export default function RegistrationForm() {
               <FormItem>
                 <FormLabel>Prénom</FormLabel>
                 <FormControl>
-                  <Input placeholder="Jean" {...field} className="bg-input border-border transition-all focus:border-primary" />
+                  <Input placeholder="Omar" {...field} className="bg-input border-border transition-all focus:border-primary" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -98,7 +98,7 @@ export default function RegistrationForm() {
               <FormItem>
                 <FormLabel>Nom</FormLabel>
                 <FormControl>
-                  <Input placeholder="Dupont" {...field} className="bg-input border-border transition-all focus:border-primary" />
+                  <Input placeholder="Bahallou" {...field} className="bg-input border-border transition-all focus:border-primary" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,7 +113,7 @@ export default function RegistrationForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="jean.dupont@email.com" {...field} className="bg-input border-border transition-all focus:border-primary" />
+                <Input type="email" placeholder="omar@email.com" {...field} className="bg-input border-border transition-all focus:border-primary" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -127,7 +127,7 @@ export default function RegistrationForm() {
             <FormItem>
               <FormLabel>Téléphone</FormLabel>
               <FormControl>
-                <Input type="tel" placeholder="+33 6 12 34 56 78" {...field} className="bg-input border-border transition-all focus:border-primary" />
+                <Input type="tel" placeholder="+212 6 12 34 56 78" {...field} className="bg-input border-border transition-all focus:border-primary" />
               </FormControl>
               <FormMessage />
             </FormItem>
