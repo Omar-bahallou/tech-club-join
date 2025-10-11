@@ -12,25 +12,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
-
-const techInterests = [
-  { id: "web", label: "Développement Web" },
-  { id: "mobile", label: "Applications Mobiles" },
-  { id: "ai", label: "Intelligence Artificielle" },
-  { id: "cloud", label: "Cloud Computing" },
-  { id: "cybersec", label: "Cybersécurité" },
-  { id: "data", label: "Data Science" },
-] as const;
 
 const formSchema = z.object({
   firstName: z.string().trim().min(2, "Le prénom doit contenir au moins 2 caractères").max(50),
   lastName: z.string().trim().min(2, "Le nom doit contenir au moins 2 caractères").max(50),
   email: z.string().trim().email("Email invalide").max(255),
-  phone: z.string().trim().regex(/^(\+33|0)[1-9](\d{2}){4}$/, "Numéro de téléphone invalide").optional().or(z.literal("")),
-  interests: z.array(z.string()).min(1, "Sélectionnez au moins un domaine d'intérêt"),
+  phone: z.string().trim().regex(/^(\+33|0)[1-9](\d{2}){4}$/, "Numéro de téléphone invalide"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -45,7 +34,6 @@ export default function RegistrationForm() {
       lastName: "",
       email: "",
       phone: "",
-      interests: [],
     },
   });
 
@@ -137,49 +125,10 @@ export default function RegistrationForm() {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Téléphone (optionnel)</FormLabel>
+              <FormLabel>Téléphone</FormLabel>
               <FormControl>
                 <Input type="tel" placeholder="+33 6 12 34 56 78" {...field} className="bg-input border-border transition-all focus:border-primary" />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="interests"
-          render={() => (
-            <FormItem>
-              <FormLabel className="text-base">Domaines d'intérêt</FormLabel>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                {techInterests.map((interest) => (
-                  <FormField
-                    key={interest.id}
-                    control={form.control}
-                    name="interests"
-                    render={({ field }) => (
-                      <FormItem className="flex items-start space-x-3 space-y-0">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(interest.id)}
-                            onCheckedChange={(checked) => {
-                              const newValue = checked
-                                ? [...(field.value || []), interest.id]
-                                : field.value?.filter((value) => value !== interest.id) || [];
-                              field.onChange(newValue);
-                            }}
-                            className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                          />
-                        </FormControl>
-                        <FormLabel className="font-normal cursor-pointer">
-                          {interest.label}
-                        </FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                ))}
-              </div>
               <FormMessage />
             </FormItem>
           )}
