@@ -1,5 +1,6 @@
 import RegistrationForm from "@/components/RegistrationForm";
 import techHero from "@/assets/tech-hero.jpg";
+import alphaLogo from "@/assets/alpha-byte-logo.png";
 import { Code2, Users, Rocket } from "lucide-react";
 
 const Index = () => {
@@ -15,6 +16,10 @@ const Index = () => {
         
         <div className="relative container mx-auto px-4 py-16 md:py-24">
           <div className="text-center space-y-6 mb-12 animate-in fade-in slide-in-from-top-4 duration-700">
+            <div className="flex justify-center mb-8">
+              <img src={alphaLogo} alt="Alpha Byte Network Logo" className="h-24 md:h-32 w-auto" />
+            </div>
+            
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
               <Code2 className="w-4 h-4 text-primary" />
               <span className="text-sm text-primary font-medium">Rejoignez-nous</span>
@@ -22,7 +27,7 @@ const Index = () => {
             
             <h1 className="text-5xl md:text-7xl font-bold">
               <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                Club de Technologie
+                Alpha Byte Network
               </span>
             </h1>
             
@@ -73,7 +78,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border mt-24 py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2025 Club de Technologie. Tous droits réservés.</p>
+          <p>© 2025 Alpha Byte Network. Tous droits réservés.</p>
         </div>
       </footer>
     </div>
