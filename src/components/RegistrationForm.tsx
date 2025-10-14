@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   firstName: z.string().trim().min(2, "Le prénom doit contenir au moins 2 caractères").max(50),
@@ -37,12 +38,24 @@ export default function RegistrationForm() {
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted:", data);
-    setIsSubmitted(true);
-    toast.success("Inscription réussie !", {
-      description: "Nous vous contacterons bientôt.",
-    });
+  const onSubmit = async (data: FormData) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-registration-email', {
+        body: data,
+      });
+
+      if (error) throw error;
+
+      setIsSubmitted(true);
+      toast.success("Inscription réussie !", {
+        description: "Nous vous contacterons bientôt.",
+      });
+    } catch (error) {
+      console.error("Error sending registration:", error);
+      toast.error("Une erreur s'est produite", {
+        description: "Veuillez réessayer plus tard.",
+      });
+    }
   };
 
   if (isSubmitted) {
