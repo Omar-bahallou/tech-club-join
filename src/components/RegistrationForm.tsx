@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import emailjs from "@emailjs/browser";
 
 const formSchema = z.object({
   firstName: z.string().trim().min(2, "Le prénom doit contenir au moins 2 caractères").max(50),
@@ -40,11 +40,17 @@ export default function RegistrationForm() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const { error } = await supabase.functions.invoke('send-registration-email', {
-        body: data,
-      });
-
-      if (error) throw error;
+      await emailjs.send(
+        'service_a8x88vu',
+        'template_lcaeer3',
+        {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone,
+        },
+        '34mE6w02W-5vKFq5F'
+      );
 
       setIsSubmitted(true);
       toast.success("Inscription réussie !", {
