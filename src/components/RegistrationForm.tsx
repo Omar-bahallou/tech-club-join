@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
 import emailjs from "@emailjs/browser";
+import MembershipCard from "./MembershipCard";
 
 const formSchema = z.object({
   firstName: z.string().trim().min(2, "Le prénom doit contenir au moins 2 caractères").max(50),
@@ -27,6 +27,8 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function RegistrationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedData, setSubmittedData] = useState<FormData | null>(null);
+  const [memberNumber, setMemberNumber] = useState(1);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -52,9 +54,11 @@ export default function RegistrationForm() {
         '34mE6w02W-5vKFq5F'
       );
 
+      setSubmittedData(data);
+      setMemberNumber(Math.floor(Math.random() * 9000) + 1000);
       setIsSubmitted(true);
       toast.success("Inscription réussie !", {
-        description: "Nous vous contacterons bientôt.",
+        description: "Votre carte de membre est prête.",
       });
     } catch (error) {
       console.error("Error sending registration:", error);
@@ -64,32 +68,22 @@ export default function RegistrationForm() {
     }
   };
 
-  if (isSubmitted) {
+  const handleNewRegistration = () => {
+    setIsSubmitted(false);
+    setSubmittedData(null);
+    form.reset();
+  };
+
+  if (isSubmitted && submittedData) {
     return (
-      <div className="flex flex-col items-center justify-center text-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="relative">
-          <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse" />
-          <CheckCircle2 className="w-24 h-24 text-primary relative" />
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Bienvenue au club !
-          </h3>
-          <p className="text-muted-foreground text-lg">
-            Votre inscription a été enregistrée avec succès.
-          </p>
-        </div>
-        <Button
-          onClick={() => {
-            setIsSubmitted(false);
-            form.reset();
-          }}
-          variant="outline"
-          className="mt-4"
-        >
-          Nouvelle inscription
-        </Button>
-      </div>
+      <MembershipCard
+        firstName={submittedData.firstName}
+        lastName={submittedData.lastName}
+        email={submittedData.email}
+        phone={submittedData.phone}
+        memberNumber={memberNumber}
+        onNewRegistration={handleNewRegistration}
+      />
     );
   }
 
