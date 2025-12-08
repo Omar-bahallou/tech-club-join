@@ -1,8 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Phone, Mail, MapPin, Globe } from "lucide-react";
 import logo from "@/assets/alpha-byte-logo.png";
+import cardBg from "@/assets/card-bg.jpg";
 
 interface MembershipCardProps {
   firstName: string;
@@ -24,6 +25,7 @@ export default function MembershipCard({
   onNewRegistration,
 }: MembershipCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [showBack, setShowBack] = useState(false);
 
   const handleDownload = async () => {
     if (!cardRef.current) return;
@@ -31,6 +33,7 @@ export default function MembershipCard({
     const canvas = await html2canvas(cardRef.current, {
       scale: 2,
       backgroundColor: null,
+      useCORS: true,
     });
     
     const link = document.createElement("a");
@@ -41,71 +44,157 @@ export default function MembershipCard({
 
   return (
     <div className="flex flex-col items-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div
-        ref={cardRef}
-        className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
-        style={{
-          background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%)",
-        }}
+      {/* Card Container */}
+      <div 
+        className="relative w-full max-w-lg cursor-pointer perspective-1000"
+        onClick={() => setShowBack(!showBack)}
       >
-        {/* Background pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
-        </div>
-
-        {/* Card content */}
-        <div className="relative p-6 flex flex-col space-y-4 text-white">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <img src={logo} alt="Club Logo" className="w-16 h-16 object-contain" />
-            <div className="text-right">
-              <p className="text-xs uppercase tracking-wider opacity-80">Carte Membre</p>
-              <p className="text-2xl font-bold">#{String(memberNumber).padStart(4, "0")}</p>
+        <div
+          ref={cardRef}
+          className={`relative transition-transform duration-700 preserve-3d ${showBack ? 'rotate-y-180' : ''}`}
+          style={{ transformStyle: 'preserve-3d' }}
+        >
+          {/* Front of Card */}
+          <div
+            className={`relative w-full aspect-[1.75/1] rounded-xl overflow-hidden shadow-2xl ${showBack ? 'hidden' : 'block'}`}
+            style={{
+              backgroundImage: `url(${cardBg})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            {/* Geometric Accents */}
+            <div className="absolute inset-0">
+              {/* Top left accent */}
+              <div className="absolute -top-4 -left-4 w-24 h-24">
+                <div className="absolute w-full h-full border-r-2 border-b-2 border-white/30 transform rotate-45 translate-x-8 -translate-y-4" />
+              </div>
+              
+              {/* Bottom right accent */}
+              <div className="absolute -bottom-8 -right-8 w-48 h-48">
+                <div className="absolute w-full h-full">
+                  <div className="absolute bottom-12 right-12 w-32 h-32 border-l-4 border-t-4 border-white/40 transform -rotate-45" />
+                  <div className="absolute bottom-8 right-8 w-24 h-24 border-l-2 border-t-2 border-white/20 transform -rotate-45" />
+                </div>
+              </div>
             </div>
-          </div>
 
-          {/* Member info */}
-          <div className="space-y-1">
-            <p className="text-2xl font-bold tracking-wide">
-              {firstName} {lastName}
-            </p>
-            <p className="text-sm opacity-90">{email}</p>
-            <p className="text-sm opacity-90">{phone}</p>
-          </div>
+            {/* Logo Center */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative">
+                <div className="w-28 h-28 rounded-full bg-teal-700/80 flex items-center justify-center border-4 border-teal-600/50">
+                  <img src={logo} alt="Alpha Byte Network" className="w-16 h-16 object-contain" />
+                </div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-36 h-36 rounded-full border border-white/20" />
+                </div>
+              </div>
+            </div>
 
-          {/* Interests */}
-          <div className="space-y-2">
-            <p className="text-xs uppercase tracking-wider opacity-80">Domaines d'intérêt</p>
-            <div className="flex flex-wrap gap-1.5">
-              {interests.map((interest, index) => (
-                <span
-                  key={index}
-                  className="text-xs px-2 py-1 rounded-full bg-white/20 backdrop-blur-sm"
-                >
-                  {interest}
+            {/* Network text around logo */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-36 h-36 relative">
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] text-white/70 font-light">
+                  ALPHA BYTE NETWORK
                 </span>
-              ))}
+                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.2em] text-white/70 font-light">
+                  YOUR TECH ONE NETWORK
+                </span>
+              </div>
+            </div>
+
+            {/* Member Number */}
+            <div className="absolute top-4 right-4 text-right">
+              <p className="text-[10px] text-white/60 uppercase tracking-wider">Member</p>
+              <p className="text-lg font-bold text-white">#{String(memberNumber).padStart(4, "0")}</p>
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="flex items-center justify-between pt-2">
-            <p className="text-xs opacity-70">Alpha Byte Network</p>
-            <p className="text-xs opacity-70">
-              {new Date().toLocaleDateString("fr-FR", {
-                year: "numeric",
-                month: "long",
-              })}
-            </p>
+          {/* Back of Card */}
+          <div
+            className={`relative w-full aspect-[1.75/1] rounded-xl overflow-hidden shadow-2xl ${showBack ? 'block' : 'hidden'}`}
+            style={{
+              backgroundImage: `url(${cardBg})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            {/* Geometric Accents */}
+            <div className="absolute inset-0">
+              <div className="absolute -bottom-8 -left-8 w-48 h-48">
+                <div className="absolute w-full h-full">
+                  <div className="absolute bottom-12 left-12 w-32 h-32 border-r-4 border-t-4 border-white/40 transform rotate-45" />
+                  <div className="absolute bottom-8 left-8 w-24 h-24 border-r-2 border-t-2 border-white/20 transform rotate-45" />
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="absolute inset-0 p-6 flex flex-col justify-between">
+              {/* Logo and Name */}
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-amber-400 tracking-wide">
+                    {firstName.toUpperCase()} {lastName.toUpperCase()}
+                  </h2>
+                  <p className="text-sm text-white/80 tracking-widest uppercase mt-1">Member</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-amber-400 text-xl font-serif">α</span>
+                  <div className="w-px h-6 bg-white/30" />
+                  <span className="text-amber-400 text-xs tracking-widest">ABN</span>
+                </div>
+              </div>
+
+              {/* Contact Info */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-3 text-white/90">
+                  <Phone className="w-4 h-4 text-amber-400" />
+                  <span className="text-sm">{phone}</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/90">
+                  <MapPin className="w-4 h-4 text-amber-400" />
+                  <span className="text-sm">Ouarzazate</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/90">
+                  <Mail className="w-4 h-4 text-amber-400" />
+                  <span className="text-sm">{email}</span>
+                </div>
+                <div className="flex items-center gap-3 text-white/90">
+                  <Globe className="w-4 h-4 text-amber-400" />
+                  <span className="text-sm">www.AlphaByteNetwork.com</span>
+                </div>
+              </div>
+
+              {/* Interests */}
+              <div className="flex flex-wrap gap-1.5">
+                {interests.slice(0, 4).map((interest, index) => (
+                  <span
+                    key={index}
+                    className="text-[10px] px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-400 border border-amber-400/30"
+                  >
+                    {interest}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Alpha Byte Network text on right side */}
+            <div className="absolute right-4 top-1/2 -translate-y-1/2">
+              <p className="text-[10px] text-white/40 tracking-[0.2em] uppercase writing-mode-vertical" style={{ writingMode: 'vertical-rl' }}>
+                Alpha Byte Network
+              </p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+      <p className="text-sm text-muted-foreground">Cliquez sur la carte pour la retourner</p>
+
+      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-lg">
         <Button
           onClick={handleDownload}
-          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.5)]"
+          className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-semibold py-6 text-lg transition-all hover:shadow-[0_0_20px_hsl(45,100%,50%,0.3)]"
         >
           <Download className="w-5 h-5 mr-2" />
           Télécharger la carte
@@ -113,7 +202,7 @@ export default function MembershipCard({
         <Button
           onClick={onNewRegistration}
           variant="outline"
-          className="flex-1 py-6 text-lg"
+          className="flex-1 py-6 text-lg border-white/20 hover:bg-white/5"
         >
           Nouvelle inscription
         </Button>
