@@ -79,27 +79,49 @@ export default function MembershipCard({
               </div>
             </div>
 
-            {/* Logo Center */}
+            {/* Circular Badge Logo */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative">
-                <div className="w-28 h-28 rounded-full bg-teal-700/80 flex items-center justify-center border-4 border-teal-600/50">
+              <div className="relative w-36 h-36">
+                {/* Outer ring with text */}
+                <svg viewBox="0 0 200 200" className="w-full h-full">
+                  {/* Outer circle */}
+                  <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                  
+                  {/* Main teal circle */}
+                  <circle cx="100" cy="100" r="80" fill="#2d6a6a" stroke="#3d7a7a" strokeWidth="3" />
+                  
+                  {/* Inner decorative circle */}
+                  <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+                  
+                  {/* Top curved text path */}
+                  <defs>
+                    <path id="topArc" d="M 30,100 A 70,70 0 0,1 170,100" fill="none" />
+                    <path id="bottomArc" d="M 170,100 A 70,70 0 0,1 30,100" fill="none" />
+                  </defs>
+                  
+                  {/* Top text */}
+                  <text fill="rgba(255,255,255,0.9)" fontSize="11" fontWeight="400" letterSpacing="3">
+                    <textPath href="#topArc" startOffset="50%" textAnchor="middle">
+                      ALPHA BYTE NETWORK
+                    </textPath>
+                  </text>
+                  
+                  {/* Bottom text */}
+                  <text fill="rgba(255,255,255,0.7)" fontSize="9" fontWeight="300" letterSpacing="2">
+                    <textPath href="#bottomArc" startOffset="50%" textAnchor="middle">
+                      YOUR TECH ONE NETWORK
+                    </textPath>
+                  </text>
+                  
+                  {/* Decorative dots */}
+                  <circle cx="30" cy="100" r="3" fill="rgba(255,255,255,0.5)" />
+                  <circle cx="170" cy="100" r="3" fill="rgba(255,255,255,0.5)" />
+                </svg>
+                
+                {/* Center logo */}
+                <div className="absolute inset-0 flex items-center justify-center">
                   <img src={logo} alt="Alpha Byte Network" className="w-16 h-16 object-contain" />
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-36 h-36 rounded-full border border-white/20" />
-                </div>
-              </div>
-            </div>
-
-            {/* Network text around logo */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-36 h-36 relative">
-                <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.3em] text-white/70 font-light">
-                  ALPHA BYTE NETWORK
-                </span>
-                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] tracking-[0.2em] text-white/70 font-light">
-                  YOUR TECH ONE NETWORK
-                </span>
               </div>
             </div>
 
