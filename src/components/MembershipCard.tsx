@@ -10,15 +10,17 @@ interface MembershipCardProps {
   email: string;
   phone: string;
   memberNumber: number;
+  interests: string[];
   onNewRegistration: () => void;
 }
 
-export default function MembershipCard ({
+export default function MembershipCard({
   firstName,
   lastName,
   email,
   phone,
   memberNumber,
+  interests,
   onNewRegistration,
 }: MembershipCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -41,7 +43,7 @@ export default function MembershipCard ({
     <div className="flex flex-col items-center space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div
         ref={cardRef}
-        className="relative w-full max-w-md aspect-[1.6/1] rounded-2xl overflow-hidden shadow-2xl"
+        className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl"
         style={{
           background: "linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%)",
         }}
@@ -53,7 +55,7 @@ export default function MembershipCard ({
         </div>
 
         {/* Card content */}
-        <div className="relative h-full p-6 flex flex-col justify-between text-white">
+        <div className="relative p-6 flex flex-col space-y-4 text-white">
           {/* Header */}
           <div className="flex items-center justify-between">
             <img src={logo} alt="Club Logo" className="w-16 h-16 object-contain" />
@@ -72,9 +74,24 @@ export default function MembershipCard ({
             <p className="text-sm opacity-90">{phone}</p>
           </div>
 
+          {/* Interests */}
+          <div className="space-y-2">
+            <p className="text-xs uppercase tracking-wider opacity-80">Domaines d'intérêt</p>
+            <div className="flex flex-wrap gap-1.5">
+              {interests.map((interest, index) => (
+                <span
+                  key={index}
+                  className="text-xs px-2 py-1 rounded-full bg-white/20 backdrop-blur-sm"
+                >
+                  {interest}
+                </span>
+              ))}
+            </div>
+          </div>
+
           {/* Footer */}
-          <div className="flex items-center justify-between">
-            <p className="text-xs opacity-70">Alpha Byte Club</p>
+          <div className="flex items-center justify-between pt-2">
+            <p className="text-xs opacity-70">Alpha Byte Network</p>
             <p className="text-xs opacity-70">
               {new Date().toLocaleDateString("fr-FR", {
                 year: "numeric",

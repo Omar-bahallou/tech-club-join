@@ -12,15 +12,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import emailjs from "@emailjs/browser";
 import MembershipCard from "./MembershipCard";
+
+const INTEREST_OPTIONS = [
+  { id: "web", label: "Développement Web" },
+  { id: "mobile", label: "Développement Mobile" },
+  { id: "ai", label: "Intelligence Artificielle" },
+  { id: "cybersecurity", label: "Cybersécurité" },
+  { id: "data", label: "Data Science" },
+  { id: "cloud", label: "Cloud Computing" },
+  { id: "iot", label: "IoT & Embarqué" },
+  { id: "design", label: "UI/UX Design" },
+] as const;
 
 const formSchema = z.object({
   firstName: z.string().trim().min(2, "Le prénom doit contenir au moins 2 caractères").max(50),
   lastName: z.string().trim().min(2, "Le nom doit contenir au moins 2 caractères").max(50),
   email: z.string().trim().email("Email invalide").max(255),
   phone: z.string().trim().regex(/^(\+212|0)[67]\d{8}$/, "Numéro de téléphone invalide"),
+  interests: z.array(z.string()).min(1, "Sélectionnez au moins un domaine d'intérêt"),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -37,6 +50,7 @@ export default function RegistrationForm() {
       lastName: "",
       email: "",
       phone: "",
+      interests: [],
     },
   });
 
@@ -50,6 +64,9 @@ export default function RegistrationForm() {
           lastName: data.lastName,
           email: data.email,
           phone: data.phone,
+          interests: data.interests.map(id => 
+            INTEREST_OPTIONS.find(opt => opt.id === id)?.label || id
+          ).join(", "),
         },
         '34mE6w02W-5vKFq5F'
       );
@@ -74,6 +91,10 @@ export default function RegistrationForm() {
     form.reset();
   };
 
+  const getInterestLabels = (ids: string[]) => {
+    return ids.map(id => INTEREST_OPTIONS.find(opt => opt.id === id)?.label || id);
+  };
+
   if (isSubmitted && submittedData) {
     return (
       <MembershipCard
@@ -82,6 +103,7 @@ export default function RegistrationForm() {
         email={submittedData.email}
         phone={submittedData.phone}
         memberNumber={memberNumber}
+        interests={getInterestLabels(submittedData.interests)}
         onNewRegistration={handleNewRegistration}
       />
     );
@@ -142,6 +164,48 @@ export default function RegistrationForm() {
               <FormControl>
                 <Input type="tel" placeholder="+212 612345678" {...field} className="bg-input border-border transition-all focus:border-primary" />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="interests"
+          render={() => (
+            <FormItem>
+              <FormLabel>Domaines d'intérêt * (sélectionnez au moins un)</FormLabel>
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                {INTEREST_OPTIONS.map((option) => (
+                  <FormField
+                    key={option.id}
+                    control={form.control}
+                    name="interests"
+                    render={({ field }) => (
+                      <FormItem
+                        key={option.id}
+                        className="flex flex-row items-center space-x-3 space-y-0"
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(option.id)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, option.id])
+                                : field.onChange(
+                                    field.value?.filter((value) => value !== option.id)
+                                  );
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="text-sm font-normal cursor-pointer">
+                          {option.label}
+                        </FormLabel>
+                      </FormItem>
+                    )}
+                  />
+                ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}
