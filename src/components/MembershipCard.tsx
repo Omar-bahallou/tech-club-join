@@ -13,7 +13,7 @@ interface MembershipCardProps {
   onNewRegistration: () => void;
 }
 
-export default function MembershipCard({
+export default function MembershipCard ({
   firstName,
   lastName,
   email,
