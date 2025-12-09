@@ -98,11 +98,19 @@ export default function RegistrationForm() {
       toast.success("Inscription réussie !", {
         description: "Votre carte de membre est prête.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending registration:", error);
-      toast.error("Une erreur s'est produite", {
-        description: "Veuillez réessayer plus tard.",
-      });
+      
+      // Check for duplicate email error
+      if (error?.code === '23505' || error?.message?.includes('duplicate')) {
+        toast.error("Email déjà utilisé", {
+          description: "Cette adresse email est déjà enregistrée.",
+        });
+      } else {
+        toast.error("Une erreur s'est produite", {
+          description: "Veuillez réessayer plus tard.",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
