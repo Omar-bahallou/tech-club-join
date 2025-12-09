@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import emailjs from "@emailjs/browser";
+import { supabase } from "@/integrations/supabase/client";
 import MembershipCard from "./MembershipCard";
 
 const INTEREST_OPTIONS = [
@@ -41,7 +42,8 @@ type FormData = z.infer<typeof formSchema>;
 export default function RegistrationForm() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submittedData, setSubmittedData] = useState<FormData | null>(null);
-  const [memberNumber, setMemberNumber] = useState(1);
+  const [memberNumber, setMemberNumber] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -55,7 +57,26 @@ export default function RegistrationForm() {
   });
 
   const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
     try {
+      // Save to Supabase database
+      const { data: member, error } = await supabase
+        .from('members')
+        .insert({
+          first_name: data.firstName,
+          last_name: data.lastName,
+          email: data.email,
+          phone: data.phone,
+          interests: data.interests.map(id => 
+            INTEREST_OPTIONS.find(opt => opt.id === id)?.label || id
+          ),
+        } as any)
+        .select('member_number')
+        .single();
+
+      if (error) throw error;
+
+      // Send email notification
       await emailjs.send(
         'service_a8x88vu',
         'template_lcaeer3',
@@ -72,7 +93,7 @@ export default function RegistrationForm() {
       );
 
       setSubmittedData(data);
-      setMemberNumber(Math.floor(Math.random() * 9000) + 1000);
+      setMemberNumber(member.member_number);
       setIsSubmitted(true);
       toast.success("Inscription réussie !", {
         description: "Votre carte de membre est prête.",
@@ -82,6 +103,8 @@ export default function RegistrationForm() {
       toast.error("Une erreur s'est produite", {
         description: "Veuillez réessayer plus tard.",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
