@@ -10,7 +10,7 @@ interface MembershipCardProps {
   lastName: string;
   email: string;
   phone: string;
-  memberNumber: number;
+  memberNumber: string;
   interests: string[];
   onNewRegistration: () => void;
 }
