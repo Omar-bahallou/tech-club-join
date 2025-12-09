@@ -85,13 +85,13 @@ export default function MembershipCard({
                 {/* Outer ring with text */}
                 <svg viewBox="0 0 200 200" className="w-full h-full">
                   {/* Outer circle */}
-                  <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                  <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
                   
-                  {/* Main teal circle */}
-                  <circle cx="100" cy="100" r="80" fill="#2d6a6a" stroke="#3d7a7a" strokeWidth="3" />
+                  {/* Main teal circle - matching reference shade */}
+                  <circle cx="100" cy="100" r="80" fill="#1a5252" stroke="#246666" strokeWidth="3" />
                   
                   {/* Inner decorative circle */}
-                  <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+                  <circle cx="100" cy="100" r="70" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
                   
                   {/* Top curved text path */}
                   <defs>
