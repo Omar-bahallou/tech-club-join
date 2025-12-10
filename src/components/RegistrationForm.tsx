@@ -179,7 +179,7 @@ export default function RegistrationForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="omar@email.com" {...field} className="bg-input border-border transition-all focus:border-primary" />
+                <Input type="email" placeholder="omar12@gmail.com" {...field} className="bg-input border-border transition-all focus:border-primary" />
               </FormControl>
               <FormMessage />
             </FormItem>
