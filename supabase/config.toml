@@ -1,1 +1,4 @@
 project_id = "xlhxeplalzkqftihexee"
+
+[functions.register-member]
+verify_jwt = false
