@@ -44,6 +44,7 @@ export default function RegistrationForm() {
   const [submittedData, setSubmittedData] = useState<FormData | null>(null);
   const [memberNumber, setMemberNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -59,22 +60,38 @@ export default function RegistrationForm() {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      // Save to Supabase database
-      const { data: member, error } = await supabase
-        .from('members')
-        .insert({
-          first_name: data.firstName,
-          last_name: data.lastName,
+      // Call secure edge function for registration
+      const { data: response, error } = await supabase.functions.invoke('register-member', {
+        body: {
+          firstName: data.firstName,
+          lastName: data.lastName,
           email: data.email,
           phone: data.phone,
           interests: data.interests.map(id => 
             INTEREST_OPTIONS.find(opt => opt.id === id)?.label || id
           ),
-        } as any)
-        .select('member_number')
-        .single();
+          honeypot: honeypot, // Honeypot field for bot detection
+        },
+      });
 
       if (error) throw error;
+      
+      if (!response.success) {
+        // Handle specific error messages from edge function
+        if (response.error === 'Email already registered') {
+          toast.error("Email déjà utilisé", {
+            description: "Cette adresse email est déjà enregistrée.",
+          });
+          return;
+        }
+        if (response.error === 'Too many requests. Please try again later.') {
+          toast.error("Trop de tentatives", {
+            description: "Veuillez réessayer dans quelques minutes.",
+          });
+          return;
+        }
+        throw new Error(response.error || 'Registration failed');
+      }
 
       // Send email notification
       await emailjs.send(
@@ -93,24 +110,16 @@ export default function RegistrationForm() {
       );
 
       setSubmittedData(data);
-      setMemberNumber(member.member_number);
+      setMemberNumber(response.memberNumber);
       setIsSubmitted(true);
       toast.success("Inscription réussie !", {
         description: "Votre carte de membre est prête.",
       });
     } catch (error: any) {
       console.error("Error sending registration:", error);
-      
-      // Check for duplicate email error
-      if (error?.code === '23505' || error?.message?.includes('duplicate')) {
-        toast.error("Email déjà utilisé", {
-          description: "Cette adresse email est déjà enregistrée.",
-        });
-      } else {
-        toast.error("Une erreur s'est produite", {
-          description: "Veuillez réessayer plus tard.",
-        });
-      }
+      toast.error("Une erreur s'est produite", {
+        description: "Veuillez réessayer plus tard.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -143,6 +152,17 @@ export default function RegistrationForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        {/* Honeypot field - hidden from users, bots will fill it */}
+        <div className="absolute -left-[9999px]" aria-hidden="true">
+          <input
+            type="text"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
